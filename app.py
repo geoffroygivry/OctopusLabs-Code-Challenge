@@ -24,7 +24,7 @@ application = tornado.web.Application([
 
 # Start the server at port 8889
 if __name__ == "__main__":
-  PortNumber = str(8889)
+  PortNumber = str(8888)
   print(r'Server Running at http://localhost:' + PortNumber + r'/')
   print(r'To close press ctrl + c')
   application.listen(PortNumber)
