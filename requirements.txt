@@ -1,2 +1,10 @@
+matplotlib
 tornado
+<<<<<<< HEAD
 gunicorn==19.7.1
+=======
+requests
+beautifulsoup4
+nltk
+wordcloud
+>>>>>>> c5d50b66ce0419c8b3e72f1c8396ae7fc966ad28

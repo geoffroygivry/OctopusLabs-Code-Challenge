@@ -5,4 +5,8 @@ services:
     volumes: # For dev purpose
      - .:/code # For Dev Purpose: Allows to reload and display the fresh new code.
     ports:
+<<<<<<< HEAD
      - "8080:80"
+=======
+     - "8888:8888"
+>>>>>>> c5d50b66ce0419c8b3e72f1c8396ae7fc966ad28
