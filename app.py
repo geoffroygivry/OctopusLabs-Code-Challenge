@@ -3,6 +3,10 @@ import tornado.ioloop
 import tornado.web
 import os
 
+from tornado.options import define, options
+ 
+define("port", default=8080, help="run on the given port", type=int)
+
 # Setting up the main template
 class MainHandler(tornado.web.RequestHandler):
   def get(self):
@@ -24,8 +28,8 @@ application = tornado.web.Application([
 
 # Start the server at port 8889
 if __name__ == "__main__":
-  PortNumber = str(8888)
-  print(r'Server Running at http://localhost:' + PortNumber + r'/')
+  tornado.options.parse_command_line()
+  print(r'Server Running at http://localhost:' + str(options.port) + r'/')
   print(r'To close press ctrl + c')
-  application.listen(PortNumber)
+  application.listen(options.port)
   tornado.ioloop.IOLoop.instance().start()

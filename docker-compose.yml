@@ -1,6 +1,8 @@
 version: '3'
 services:
-  web:
+  octoweb:
     build: .
+    volumes: # For dev purpose
+     - .:/code # For Dev Purpose: Allows to reload and display the fresh new code.
     ports:
-     - "8888:8888"
+     - "8080:80"
