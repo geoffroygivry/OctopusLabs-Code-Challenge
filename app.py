@@ -3,7 +3,7 @@ import tornado.ioloop
 import tornado.web
 import os
 
-<<<<<<< HEAD
+
 from tornado.options import define, options
  
 define("port", default=8080, help="run on the given port", type=int)
@@ -11,7 +11,7 @@ define("port", default=8080, help="run on the given port", type=int)
 # Custom imports
 import web_scrape
 import wordcloud_generator as wcg
->>>>>>> c5d50b66ce0419c8b3e72f1c8396ae7fc966ad28
+
 
 # Setting up the main template
 class MainHandler(tornado.web.RequestHandler):
