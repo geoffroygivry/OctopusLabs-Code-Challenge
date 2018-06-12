@@ -2,10 +2,16 @@
 -----
 
 ## Instructions
-first cd into this directory,
-and use the command 
+create a new directory, cd in it 
+and run this command:
+```
+git clone https://github.com/geoffroygivry/OctopusLabs-Code-Challenge.git
+```
+then type:
 ```
 docker-compose up
 ```
-Open your browser and go to localhost and you should be able to see the site.
-Enjoy! :)
+when the docker container is built, open your browser and type
+```
+http://localhost
+```
