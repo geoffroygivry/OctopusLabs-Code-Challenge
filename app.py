@@ -1,20 +1,65 @@
 # importing Tornado module
 import tornado.ioloop
 import tornado.web
+
+import torndb
+import MySQLdb
+
 import os
+import subprocess
+
 
 
 from tornado.options import define, options
- 
+
 define("port", default=8080, help="run on the given port", type=int)
+define("mysql_host", default="127.0.0.1:3306", help="blog database host")
+define("mysql_database", default="wordcloudstore", help="blog database name")
+define("mysql_user", default="wordcloud_user", help="blog database user")
+define("mysql_password", default="torncloud", help="blog database password")
 
 # Custom imports
 import web_scrape
 import wordcloud_generator as wcg
 
+class Application(tornado.web.Application):
+    def __init__(self):
+        handlers = [
+            (r"/", HomeHandler),
+            (r"/word_cloud", WordCloudHandler)
+        ]
+        settings = dict(
+            template_path=os.path.join(os.path.dirname(__file__), "templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            debug=True
+        )
+        tornado.web.Application.__init__(self, handlers, **settings)
+
+        # Have one global connection to the blog DB across all handlers
+        self.db = torndb.Connection(
+            host=options.mysql_host, database=options.mysql_database,
+            user=options.mysql_user, password=options.mysql_password)
+
+        self.init_create_tables()
+
+    def init_create_tables(self):
+        try:
+            self.db.get("SELECT COUNT(*) from entries;")
+        except MySQLdb.ProgrammingError:
+            subprocess.check_call(['mysql',
+                                   '--host=' + options.mysql_host,
+                                   '--database=' + options.mysql_database,
+                                   '--user=' + options.mysql_user,
+                                   '--password=' + options.mysql_password],
+                                  stdin=open('schema.sql'))
+
+class BaseHandler(tornado.web.RequestHandler):
+    @property
+    def db(self):
+        return self.application.db
 
 # Setting up the main template
-class MainHandler(tornado.web.RequestHandler):
+class HomeHandler(BaseHandler):
   def get(self):
     self.render('index.html')
 
@@ -29,20 +74,15 @@ class WordCloudHandler(tornado.web.RequestHandler):
         self.render('wordCloud.html')
 
 
-settings = {
-    'template_path': os.path.join(os.path.dirname(os.path.realpath(__file__)), 'templates'),
-    'static_path': os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static'),
-    'debug': True
-    }
 
-# setting up the root of the web app
-application = tornado.web.Application([
-    (r"/", MainHandler), (r"/word_cloud", WordCloudHandler)], **settings)
+def main():
+    tornado.options.parse_command_line()
+    print(r'Server Running at http://localhost:' + str(options.port) + r'/')
+    print(r'To close press ctrl + c')
+    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.instance().start()
 
-# Start the server at port 8889
+
 if __name__ == "__main__":
-  tornado.options.parse_command_line()
-  print(r'Server Running at http://localhost:' + str(options.port) + r'/')
-  print(r'To close press ctrl + c')
-  application.listen(options.port)
-  tornado.ioloop.IOLoop.instance().start()
+    main()

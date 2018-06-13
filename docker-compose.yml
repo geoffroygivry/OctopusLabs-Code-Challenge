@@ -1,8 +1,17 @@
 version: '3'
 services:
+  mysql:
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: beautiful_wordcloud
+      MYSQL_USER: wordcloud_user
+      MYSQL_PASSWORD: torncloud
+      MYSQL_DATABASE: wordcloudstore
   octoweb:
     build: .
     volumes: # For dev purpose
      - .:/code # For Dev Purpose: Allows to reload and display the fresh new code.
+    links:
+      - mysql
     ports:
      - "8080:80"
