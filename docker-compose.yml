@@ -14,4 +14,4 @@ services:
     links:
       - mysql
     ports:
-     - "8080:80"
+     - "8888:8888"
