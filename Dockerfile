@@ -1,5 +1,9 @@
 FROM geoffroygivry/tornadoworldcloudmysql
+
 ADD . /code
 WORKDIR /code
-CMD ["python", "app.py"]
+
+RUN apt-get update && apt-get install -y mysql-client
+
+CMD python app.py --mysql_host=mysql 
 
