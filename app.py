@@ -21,11 +21,15 @@ define("mysql_password", default="torncloud", help="blog database password")
 # Custom imports
 import web_scrape
 import wordcloud_generator as wcg
+import asymmetric_encryption as ae
+import utils
+private_key, public_key = ae.generate_keys()
 
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", HomeHandler),
+            (r"/admin", AdminHandler),
             (r"/word_cloud", WordCloudHandler)
         ]
         settings = dict(
@@ -63,16 +67,32 @@ class HomeHandler(BaseHandler):
   def get(self):
     self.render('index.html')
 
-class WordCloudHandler(tornado.web.RequestHandler):
+
+class WordCloudHandler(BaseHandler):
     def post(self):
         url_arg = self.get_argument('my_url')
         url_scraped = web_scrape.go_scrape(url_arg)
         get_dict = web_scrape.get_dict_words(url_scraped)
         ordered_dict = web_scrape.sort_dict_first_hundreds(get_dict)
         dict_to_string = web_scrape.latest_dict_to_string(ordered_dict)
-        wordCloud_result = wcg.generate_wordcloud(dict_to_string)
+        wcg.generate_wordcloud(dict_to_string)
+        formated_words = utils.format_words_for_db(ordered_dict, public_key)
+        for formated_word in formated_words:
+            encryptedword = formated_word["encryptedword"]
+            word = formated_word['word']
+            countedword = formated_word['countedword']
+            sql_command = """INSERT INTO words (encryptedword, word, countedword) VALUES ("%s", "%s", %s)""" % (
+                encryptedword, word, countedword)
+            self.db.execute(sql_command)
         self.render('wordCloud.html')
 
+class AdminHandler(BaseHandler):
+    def get(self):
+        db_encrypted_words = [word.word for word in self.db.query("SELECT * FROM words")]
+        db_decrypted_words = [ae.decrypt_message(word, private_key) for word in db_encrypted_words]
+        countedword = [word.countedword for word in self.db.query("SELECT * FROM words")]
+        word_and_count = zip(db_decrypted_words, countedword)
+        self.render('admin2.html', words=word_and_count)
 
 
 def main():
