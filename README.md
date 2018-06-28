@@ -11,7 +11,7 @@ then type:
 ```
 docker-compose up
 ```
-when the docker container is built, open your browser and type
+when the docker container is built, open your browser and type:
 ```
 http://localhost:8888
 ```
