@@ -2,6 +2,7 @@
 -----
 
 ## Instructions
+-----
 create a new directory, cd in it 
 and run this command:
 ```
