@@ -8,7 +8,7 @@ and run this command:
 ```
 git clone https://github.com/geoffroygivry/OctopusLabs-Code-Challenge.git .
 ```
-then type:
+then type this command:
 ```
 docker-compose up
 ```
