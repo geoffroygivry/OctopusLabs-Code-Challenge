@@ -15,3 +15,4 @@ when the docker container is built, open your browser and type:
 ```
 http://localhost:8888
 ```
+You should be ready to go! 
