@@ -16,5 +16,9 @@ when the docker container is built, open your browser and type:
 ```
 http://localhost:8888
 ```
-You should be ready to go! 
 -----
+Troubleshooting:
+If you've got an error, You might have to restart the command by typing:
+```
+docker-compose up --build
+```
